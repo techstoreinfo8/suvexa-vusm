@@ -1,5 +1,6 @@
 import "./App.css";
-// import Contact from "./components/Contact";
+import { useState } from "react";
+
 import {
   Code2,
   Smartphone,
@@ -15,6 +16,7 @@ import {
 } from "lucide-react";
 
 function App() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const services = [
     {
       icon: <Code2 size={32} />,
@@ -59,35 +61,153 @@ function App() {
     "Docker",
   ];
 
+  // Contact form data
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    message: "",
+  });
+
+  const [submitting, setSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState("");
+  const [feedbackType, setFeedbackType] = useState("");
+
+  // Update form fields
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormData((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
+
+  // Submit contact enquiry
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    setSubmitting(true);
+    setFeedback("");
+    setFeedbackType("");
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/contact",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: formData.name.trim(),
+            email: formData.email.trim(),
+            phone: formData.phone.trim(),
+            subject: formData.company.trim(),
+            message: formData.message.trim(),
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result.message || "Unable to submit your enquiry."
+        );
+      }
+
+      setFeedback(
+        result.message ||
+          "Thank you for contacting Suvexa VUSM Technologies! Your message has been submitted successfully."
+      );
+
+      setFeedbackType("success");
+
+      // Clear all form fields after successful submission
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        message: "",
+      });
+    } catch (error) {
+      setFeedback(
+        error.message === "Failed to fetch"
+          ? "Cannot connect to the server. Please check that your backend is running."
+          : error.message || "Something went wrong. Please try again."
+      );
+
+      setFeedbackType("error");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="app">
       {/* Navbar */}
-      <header className="navbar">
-        <div className="logo">
-          <div className="logo-mark">S</div>
-          <div>
-            <h2>Suvexa VUSM</h2>
-            <span>Technologies</span>
-          </div>
-        </div>
+      
+{/* Navbar */}
+<header className="navbar">
+  <div className="logo">
+    <div className="logo-mark">S</div>
+    <div>
+      <h2>Suvexa VUSM</h2>
+      <span>Technologies</span>
+    </div>
+  </div>
 
-        <nav>
-          <a href="#home">Home</a>
-          <a href="#about">About Us</a>
-          <a href="#services">Services</a>
-          <a href="#technology">Technology</a>
-          <a href="#contact">Contact Us</a>
-        </nav>
+  <nav
+    id="mobile-navigation"
+    className={`mobile-nav ${mobileMenuOpen ? "open" : ""}`}
+  >
+    <a href="#home" onClick={() => setMobileMenuOpen(false)}>
+      Home
+    </a>
+    <a href="#about" onClick={() => setMobileMenuOpen(false)}>
+      About Us
+    </a>
+    <a href="#services" onClick={() => setMobileMenuOpen(false)}>
+      Services
+    </a>
+    <a href="#technology" onClick={() => setMobileMenuOpen(false)}>
+      Technology
+    </a>
+    <a href="#contact" onClick={() => setMobileMenuOpen(false)}>
+      Contact Us
+    </a>
+  </nav>
 
-        <a className="nav-button" href="#contact">
-          GET IN TOUCH
-        </a>
-      </header>
+  <a className="nav-button" href="#contact">
+    GET IN TOUCH
+  </a>
+
+  <button
+    type="button"
+    className="menu-toggle"
+    onClick={() => setMobileMenuOpen((open) => !open)}
+    aria-label={
+      mobileMenuOpen
+        ? "Close navigation menu"
+        : "Open navigation menu"
+    }
+    aria-expanded={mobileMenuOpen}
+    aria-controls="mobile-navigation"
+  >
+    <span>{mobileMenuOpen ? "✕" : "☰"}</span>
+  </button>
+</header>
+
 
       {/* Hero */}
       <section id="home" className="hero">
         <div className="hero-content">
-          <span className="badge">NEXT-GENERATION TECHNOLOGY</span>
+          <span className="badge">
+            NEXT-GENERATION TECHNOLOGY
+          </span>
 
           <h1>
             Building Digital
@@ -116,7 +236,7 @@ function App() {
         <div className="hero-card">
           <div className="orb"></div>
           <div className="hero-logo">S</div>
-          <h3>SUvexa VUSM</h3>
+          <h3>Suvexa VUSM</h3>
           <p>Innovate. Build. Transform.</p>
         </div>
       </section>
@@ -131,8 +251,9 @@ function App() {
         <div className="about-grid">
           <div>
             <p className="large-text">
-              Suvexa VUSM Technologies is a technology company focused
-              on creating modern digital solutions for businesses.
+              Suvexa VUSM Technologies is a technology company
+              focused on creating modern digital solutions
+              for businesses.
             </p>
 
             <p>
@@ -146,8 +267,8 @@ function App() {
             <ShieldCheck size={42} />
             <h3>Our Mission</h3>
             <p>
-              To empower businesses with dependable technology and
-              innovative digital solutions.
+              To empower businesses with dependable technology
+              and innovative digital solutions.
             </p>
           </div>
         </div>
@@ -167,9 +288,13 @@ function App() {
         <div className="service-grid">
           {services.map((service, index) => (
             <div className="service-card" key={index}>
-              <div className="service-icon">{service.icon}</div>
+              <div className="service-icon">
+                {service.icon}
+              </div>
+
               <h3>{service.title}</h3>
               <p>{service.text}</p>
+
               <a href="#contact">
                 Learn More <ArrowRight size={16} />
               </a>
@@ -183,9 +308,10 @@ function App() {
         <div className="why-content">
           <span>WHY SUVEXA VUSM</span>
           <h2>Technology Built Around Your Business</h2>
+
           <p>
-            We focus on creating practical technology solutions that
-            deliver measurable value.
+            We focus on creating practical technology solutions
+            that deliver measurable value.
           </p>
 
           <div className="check-list">
@@ -193,14 +319,17 @@ function App() {
               <CheckCircle2 />
               <span>Modern technology stack</span>
             </div>
+
             <div>
               <CheckCircle2 />
               <span>Scalable architecture</span>
             </div>
+
             <div>
               <CheckCircle2 />
               <span>Security-focused development</span>
             </div>
+
             <div>
               <CheckCircle2 />
               <span>Customer-focused solutions</span>
@@ -231,8 +360,8 @@ function App() {
           <span>READY TO BUILD?</span>
           <h2>Let's Create Something Amazing Together.</h2>
           <p>
-            Have an idea or a business challenge? Let's discuss how
-            technology can help.
+            Have an idea or a business challenge? Let's discuss
+            how technology can help.
           </p>
         </div>
 
@@ -249,12 +378,16 @@ function App() {
         </div>
 
         <div className="contact-grid">
+          {/* Company contact details - left side */}
           <div className="contact-info">
             <div className="contact-item">
               <Mail />
               <div>
                 <small>Email</small>
-                <p>info@suvexavusm.com / infosuvexavusm@gmail.com</p>
+                <p>
+                  info@suvexavusm.com /
+                  infosuvexavusm@gmail.com
+                </p>
               </div>
             </div>
 
@@ -275,22 +408,86 @@ function App() {
             </div>
           </div>
 
-          <form className="contact-form">
-            <input type="text" placeholder="Your Name" />
-            <input type="email" placeholder="Email Address" />
-            <input type="text" placeholder="Company" />
-            <textarea
-              rows="5"
-              placeholder="Tell us about your project"
-            ></textarea>
+          {/* Customer enquiry form - right side */}
+          <form
+            className="contact-form"
+            onSubmit={handleSubmit}
+          >
+            <input
+              type="text"
+              name="name"
+              placeholder="Your Name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              maxLength={100}
+              autoComplete="name"
+            />
 
-            <button type="submit" className="primary-button">
-              Send Message <ArrowRight size={18} />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              maxLength={254}
+              autoComplete="email"
+            />
+
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Phone Number (Optional)"
+              value={formData.phone}
+              onChange={handleChange}
+              maxLength={20}
+              autoComplete="tel"
+            />
+
+            <input
+              type="text"
+              name="company"
+              placeholder="Company Name (Optional)"
+              value={formData.company}
+              onChange={handleChange}
+              maxLength={200}
+              autoComplete="organization"
+            />
+
+            <textarea
+              name="message"
+              rows={5}
+              placeholder="Tell us about your project"
+              value={formData.message}
+              onChange={handleChange}
+              required
+              maxLength={5000}
+            />
+
+            <button
+              type="submit"
+              className="primary-button"
+              disabled={submitting}
+            >
+              {submitting ? "Sending..." : "Send Message"}
+
+              {!submitting && <ArrowRight size={18} />}
             </button>
+
+            {feedback && (
+              <p
+                className={`form-feedback ${feedbackType}`}
+                role="status"
+                aria-live="polite"
+              >
+                {feedback}
+              </p>
+            )}
           </form>
         </div>
       </section>
-       {/* <Contact /> */}
+
       {/* Footer */}
       <footer className="footer">
         <div>
@@ -314,4 +511,3 @@ function App() {
 }
 
 export default App;
-
