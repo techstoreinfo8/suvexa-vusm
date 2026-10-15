@@ -94,22 +94,27 @@ function App() {
 
     try {
       
-const response = await fetch(
-  `${import.meta.env.VITE_API_URL}/api/contact`,
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: formData.name.trim(),
-      email: formData.email.trim(),
-      phone: formData.phone.trim(),
-      subject: formData.company.trim(),
-      message: formData.message.trim(),
-    }),
-  }
-);
+      
+const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
+
+if (!API_URL) {
+  throw new Error("Backend API URL is not configured.");
+}
+
+const response = await fetch(`${API_URL}/api/contact`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    name: formData.name.trim(),
+    email: formData.email.trim(),
+    phone: formData.phone.trim(),
+    subject: formData.company.trim(),
+    message: formData.message.trim(),
+  }),
+});
+
 
 
       const result = await response.json();

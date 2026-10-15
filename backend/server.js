@@ -31,9 +31,26 @@ const pool = mysql.createPool({
 });
 
 
-app.use(cors({
-  origin: process.env.FRONTEND_ORIGIN,
-}));
+const allowedOrigins = new Set([
+  "https://suvexavusm.com",
+  "https://www.suvexavusm.com",
+]);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.has(origin)) {
+        return callback(null, true);
+      }
+
+      console.error("CORS rejected origin:", origin);
+      return callback(new Error("Origin not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
 
 app.use(express.json({ limit: "20kb" }));
 
