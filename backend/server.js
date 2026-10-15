@@ -1,4 +1,6 @@
 require("dotenv").config();
+const fs = require("fs");
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
@@ -6,15 +8,28 @@ const nodemailer = require("nodemailer");
 const rateLimit = require("express-rate-limit");
 
 const app = express();
+const caPath = path.join(__dirname, "ca.pem");
+const caCertificate = fs.readFileSync(caPath, "utf8");
+
+console.log("CA file loaded:", caPath);
+console.log("CA certificate length:", caCertificate.length);
+console.log("CA certificate header:", caCertificate.split(/\r?\n/)[0]);
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT || 3306),
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
+  connectTimeout: 15000,
+  ssl: {
+    ca: caCertificate,
+    rejectUnauthorized: true
+  }
 });
+
 
 app.use(cors({
   origin: process.env.FRONTEND_ORIGIN,
