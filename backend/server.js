@@ -143,7 +143,10 @@ async function startServer() {
       console.log(`Suvexa VUSM API running on port ${port}`);
     });
   } catch (error) {
-    console.error("Startup failed:", error.message);
+    console.error("Startup failed:", error.message);  
+    console.error("Startup failed:", error);
+    console.error("Error details:", error?.message);
+    console.error("Stack trace:", error?.stack);
     process.exit(1);
   }
 }
