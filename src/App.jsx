@@ -93,22 +93,24 @@ function App() {
     setFeedbackType("");
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/contact",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: formData.name.trim(),
-            email: formData.email.trim(),
-            phone: formData.phone.trim(),
-            subject: formData.company.trim(),
-            message: formData.message.trim(),
-          }),
-        }
-      );
+      
+const response = await fetch(
+  `${import.meta.env.VITE_API_URL}/api/contact`,
+  {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      phone: formData.phone.trim(),
+      subject: formData.company.trim(),
+      message: formData.message.trim(),
+    }),
+  }
+);
+
 
       const result = await response.json();
 
