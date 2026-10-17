@@ -66,6 +66,11 @@ const mailer = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT || 465),
   secure: Number(process.env.SMTP_PORT || 465) === 465,
+
+  connectionTimeout: 10000,
+  greetingTimeout: 10000,
+  socketTimeout: 20000,
+
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -102,7 +107,7 @@ app.post("/api/contact", async (req, res) => {
 
   let enquiryId;
 
-  // Save the enquiry first, so email failure doesn't lose it.
+  // 1. Save the enquiry to MySQL first.
   try {
     const [result] = await pool.execute(
       `INSERT INTO contact_enquiries
@@ -127,43 +132,43 @@ app.post("/api/contact", async (req, res) => {
     });
   }
 
-  try {
-    await mailer.sendMail({
-      from: `"Suvexa VUSM Website" <${process.env.SMTP_USER}>`,
-      to: process.env.CONTACT_TO,
-      replyTo: email.trim(),
-      subject: `Website enquiry #${enquiryId}`,
-      text: [
-        `Enquiry ID: ${enquiryId}`,
-        `Name: ${name.trim()}`,
-        `Email: ${email.trim()}`,
-        `Phone: ${phone?.trim() || "Not provided"}`,
-        `Subject: ${subject?.trim() || "Not provided"}`,
-        "",
-        "Message:",
-        message.trim(),
-      ].join("\n"),
-    });
+  // 2. Respond immediately after MySQL confirms the save.
+  res.status(201).json({
+    success: true,
+    message: "Thank you! Your message has been submitted.",
+    enquiryId,
+  });
 
-    return res.status(201).json({
-      success: true,
-      message: "Thank you! Your message has been submitted.",
-      enquiryId,
-    });
-  } catch (error) {
-    console.error(
-      `Email failed for enquiry ${enquiryId}:`,
-      error.message
-    );
+  // 3. Attempt email notification without waiting in the route.
+  setImmediate(async () => {
+    try {
+      await mailer.sendMail({
+        from: `"Suvexa VUSM Website" <${process.env.SMTP_USER}>`,
+        to: process.env.CONTACT_TO,
+        replyTo: email.trim(),
+        subject: `Website enquiry #${enquiryId}`,
+        text: [
+          `Enquiry ID: ${enquiryId}`,
+          `Name: ${name.trim()}`,
+          `Email: ${email.trim()}`,
+          `Phone: ${phone?.trim() || "Not provided"}`,
+          `Subject: ${subject?.trim() || "Not provided"}`,
+          "",
+          "Message:",
+          message.trim(),
+        ].join("\n"),
+      });
 
-    // The enquiry is saved, even if email delivery fails.
-    return res.status(202).json({
-      success: true,
-      message: "Your enquiry was saved, but email notification needs attention.",
-      enquiryId,
-    });
-  }
+      console.log(`Email sent for enquiry ${enquiryId}`);
+    } catch (error) {
+      console.error(
+        `Email failed for enquiry ${enquiryId}:`,
+        error.message
+      );
+    }
+  });
 });
+
 
 const port = process.env.PORT || 5000;
 
