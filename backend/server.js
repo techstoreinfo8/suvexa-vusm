@@ -4,7 +4,8 @@ const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const mysql = require("mysql2/promise");
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
+const resend = new Resend(process.env.RESEND_API_KEY);
 const rateLimit = require("express-rate-limit");
 
 const app = express();
@@ -62,20 +63,6 @@ app.use("/api/contact", rateLimit({
   legacyHeaders: false,
 }));
 
-const mailer = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT || 465),
-  secure: Number(process.env.SMTP_PORT || 465) === 465,
-
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 20000,
-
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
 
 app.get("/health", (req, res) => {
   res.json({ status: "ok", app: "Suvexa VUSM" });
@@ -139,34 +126,45 @@ app.post("/api/contact", async (req, res) => {
     enquiryId,
   });
 
-  // 3. Attempt email notification without waiting in the route.
   setImmediate(async () => {
-    try {
-      await mailer.sendMail({
-        from: `"Suvexa VUSM Website" <${process.env.SMTP_USER}>`,
-        to: process.env.CONTACT_TO,
-        replyTo: email.trim(),
-        subject: `Website enquiry #${enquiryId}`,
-        text: [
-          `Enquiry ID: ${enquiryId}`,
-          `Name: ${name.trim()}`,
-          `Email: ${email.trim()}`,
-          `Phone: ${phone?.trim() || "Not provided"}`,
-          `Subject: ${subject?.trim() || "Not provided"}`,
-          "",
-          "Message:",
-          message.trim(),
-        ].join("\n"),
-      });
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "Suvexa VUSM Website <notifications@notify.suvexavusm.com>",
+      to: [process.env.CONTACT_TO || "info@suvexavusm.com"],
+      replyTo: email.trim(),
+      subject: `Website enquiry #${enquiryId}`,
 
-      console.log(`Email sent for enquiry ${enquiryId}`);
-    } catch (error) {
+      text: [
+        `Enquiry ID: ${enquiryId}`,
+        `Name: ${name.trim()}`,
+        `Email: ${email.trim()}`,
+        `Phone: ${phone?.trim() || "Not provided"}`,
+        `Subject: ${subject?.trim() || "Not provided"}`,
+        "",
+        "Message:",
+        message.trim(),
+      ].join("\n"),
+    });
+
+    if (error) {
       console.error(
-        `Email failed for enquiry ${enquiryId}:`,
+        `Resend email failed for enquiry ${enquiryId}:`,
         error.message
       );
+      return;
     }
-  });
+
+    console.log(
+      `Resend email accepted for enquiry ${enquiryId}:`,
+      data?.id
+    );
+  } catch (error) {
+    console.error(
+      `Resend email failed for enquiry ${enquiryId}:`,
+      error.message
+    );
+  }
+});
 });
 
 

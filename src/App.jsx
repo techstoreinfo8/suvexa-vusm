@@ -96,7 +96,7 @@ function App() {
       
       
 const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
-
+console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
 if (!API_URL) {
   throw new Error("Backend API URL is not configured.");
 }
