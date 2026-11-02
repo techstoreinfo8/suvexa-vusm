@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+backend/.env
+backend/test-db.js
+# Local environment files
+.env
+.env.*
+!.env.example
+backend/.env
