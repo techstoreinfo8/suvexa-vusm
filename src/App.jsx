@@ -1,6 +1,8 @@
 import "./App.css";
 import { useState } from "react";
 
+import { Palette, Image, Video, Share2 } from "lucide-react";
+
 import {
   Code2,
   Smartphone,
@@ -93,27 +95,27 @@ function App() {
     setFeedbackType("");
 
     try {
-      
-      
-const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
-console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
-if (!API_URL) {
-  throw new Error("Backend API URL is not configured.");
-}
 
-const response = await fetch(`${API_URL}/api/contact`, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    name: formData.name.trim(),
-    email: formData.email.trim(),
-    phone: formData.phone.trim(),
-    subject: formData.company.trim(),
-    message: formData.message.trim(),
-  }),
-});
+
+      const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
+      console.log("VITE_API_URL:", import.meta.env.VITE_API_URL);
+      if (!API_URL) {
+        throw new Error("Backend API URL is not configured.");
+      }
+
+      const response = await fetch(`${API_URL}/api/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim(),
+          subject: formData.company.trim(),
+          message: formData.message.trim(),
+        }),
+      });
 
 
 
@@ -127,7 +129,7 @@ const response = await fetch(`${API_URL}/api/contact`, {
 
       setFeedback(
         result.message ||
-          "Thank you for contacting Suvexa VUSM Technologies! Your message has been submitted successfully."
+        "Thank you for contacting Suvexa VUSM Technologies! Your message has been submitted successfully."
       );
 
       setFeedbackType("success");
@@ -153,67 +155,96 @@ const response = await fetch(`${API_URL}/api/contact`, {
     }
   };
 
+  const healthcareServices = [
+    {
+      title: "Medical Branding",
+      text: "Professional logo design and brand identity solutions for clinics, hospitals and healthcare professionals.",
+      icon: <Palette size={28} />
+    },
+    {
+      title: "Healthcare Graphics",
+      text: "Creative posters, brochures and promotional designs for healthcare businesses.",
+      icon: <Image size={28} />
+    },
+    {
+      title: "Promotional Videos",
+      text: "Engaging promotional videos and visual content for clinics and medical professionals.",
+      icon: <Video size={28} />
+    },
+    {
+      title: "Social Media & Digital Marketing",
+      text: "Creative social media content and digital promotion to strengthen healthcare brand visibility.",
+      icon: <Share2 size={28} />
+    }
+  ];
+
   return (
     <div className="app">
       {/* Navbar */}
-      
-{/* Navbar */}
-<header className="navbar">
-  <div className="logo">
-    <div className="logo-mark">S</div>
-    <div>
-      <h2>Suvexa VUSM</h2>
-      <span>Technologies</span>
-    </div>
-  </div>
 
-  <nav
-    id="mobile-navigation"
-    className={`mobile-nav ${mobileMenuOpen ? "open" : ""}`}
-  >
-    <a href="#home" onClick={() => setMobileMenuOpen(false)}>
-      Home
-    </a>
-    <a href="#about" onClick={() => setMobileMenuOpen(false)}>
-      About Us
-    </a>
-    <a href="#services" onClick={() => setMobileMenuOpen(false)}>
-      Services
-    </a>
-    <a href="#technology" onClick={() => setMobileMenuOpen(false)}>
-      Technology
-    </a>
-    <a href="#contact" onClick={() => setMobileMenuOpen(false)}>
-      Contact Us
-    </a>
-  </nav>
+      {/* Navbar */}
+      <header className="navbar">
+        <div className="logo">
+          <div className="logo-mark">S</div>
+          <div>
+            <h2>Suvexa VUSM</h2>
+            <span>Technologies</span>
+          </div>
+        </div>
 
-  <a className="nav-button" href="#contact">
-    GET IN TOUCH
-  </a>
 
-  <button
-    type="button"
-    className="menu-toggle"
-    onClick={() => setMobileMenuOpen((open) => !open)}
-    aria-label={
-      mobileMenuOpen
-        ? "Close navigation menu"
-        : "Open navigation menu"
-    }
-    aria-expanded={mobileMenuOpen}
-    aria-controls="mobile-navigation"
-  >
-    <span>{mobileMenuOpen ? "✕" : "☰"}</span>
-  </button>
-</header>
+        <nav
+          id="mobile-navigation"
+          className={`mobile-nav ${mobileMenuOpen ? "open" : ""}`}
+        >
+          <a href="#home" onClick={() => setMobileMenuOpen(false)}>
+            Home
+          </a>
+
+          <a href="#about" onClick={() => setMobileMenuOpen(false)}>
+            About Us
+          </a>
+
+          <a href="#services" onClick={() => setMobileMenuOpen(false)}>
+            Services
+          </a>
+
+          <a href="#technology" onClick={() => setMobileMenuOpen(false)}>
+            Technology
+          </a>
+
+          <a href="#contact" onClick={() => setMobileMenuOpen(false)}>
+            GET IN TOUCH
+          </a>
+        </nav>
+
+
+        <a className="nav-button" href="#contact">
+          GET IN TOUCH
+        </a>
+
+        <button
+          type="button"
+          className="menu-toggle"
+          onClick={() => setMobileMenuOpen((open) => !open)}
+          aria-label={
+            mobileMenuOpen
+              ? "Close navigation menu"
+              : "Open navigation menu"
+          }
+          aria-expanded={mobileMenuOpen}
+          aria-controls="mobile-navigation"
+        >
+          <span>{mobileMenuOpen ? "✕" : "☰"}</span>
+        </button>
+      </header>
 
 
       {/* Hero */}
       <section id="home" className="hero">
         <div className="hero-content">
           <span className="badge">
-            NEXT-GENERATION TECHNOLOGY
+            NEXT-GENERATION TECHNOLOGY & CREATIVITY
           </span>
 
           <h1>
@@ -223,10 +254,8 @@ const response = await fetch(`${API_URL}/api/contact`, {
             That Move Business Forward.
           </h1>
 
-          <p>
-            Suvexa VUSM Technologies delivers innovative software,
-            cloud, AI and digital solutions that help businesses
-            grow faster and smarter.
+          <p className="large-text">
+            Suvexa VUSM Technologies combines innovative software development with creative healthcare solutions to help businesses build their digital presence, connect with customers and grow smarter.
           </p>
 
           <div className="hero-buttons">
@@ -258,15 +287,11 @@ const response = await fetch(`${API_URL}/api/contact`, {
         <div className="about-grid">
           <div>
             <p className="large-text">
-              Suvexa VUSM Technologies is a technology company
-              focused on creating modern digital solutions
-              for businesses.
+              Suvexa VUSM Technologies is a digital solutions company focused on helping businesses grow through innovative technology and creative digital services.
             </p>
 
-            <p>
-              We combine technology, creativity and business
-              understanding to develop solutions that are secure,
-              scalable and easy to use.
+            <p className="large-text">
+              We bring together software development, modern digital experiences and healthcare-focused creative solutions to help businesses strengthen their online presence, connect with their audiences and move forward with confidence.
             </p>
           </div>
 
@@ -274,26 +299,75 @@ const response = await fetch(`${API_URL}/api/contact`, {
             <ShieldCheck size={42} />
             <h3>Our Mission</h3>
             <p>
-              To empower businesses with dependable technology
-              and innovative digital solutions.
+              To empower businesses with reliable technology, meaningful creativity and innovative digital solutions that create lasting value.
             </p>
+          </div>
+          <div className="about-box">
+            <ShieldCheck size={42} />
+            <h3>Our Vision</h3>
+            <p>
+              To become a trusted digital solutions partner, delivering technology and creative services that make a meaningful difference for businesses.            </p>
+          </div>
+          <div className="about-box">
+            <ShieldCheck size={42} />
+            <h3>What We Do</h3>
+            <p>Technology & Software Solutions</p>
+            <br />
+            <p>Healthcare Creative & Digital Solutions</p>
           </div>
         </div>
       </section>
 
       {/* Services */}
+
+      {/* Services */}
       <section id="services" className="section services">
         <div className="section-heading center">
           <span>WHAT WE DO</span>
-          <h2>Our Technology Services</h2>
+          <h2>Our Digital Solutions</h2>
           <p>
-            End-to-end technology services designed for modern
-            businesses.
+            Technology and creative services designed to help businesses
+            grow, innovate and build a stronger digital presence.
+          </p>
+        </div>
+
+        {/* Division 01 - Technology */}
+        <div className="division-heading">
+          <span>Technology & Software Solutions</span>
+          <p>
+            Innovative software and digital solutions designed
+            to move your business forward.
           </p>
         </div>
 
         <div className="service-grid">
           {services.map((service, index) => (
+            <div className="service-card" key={index}>
+              <div className="service-icon">
+                {service.icon}
+              </div>
+
+              <h3>{service.title}</h3>
+              <p>{service.text}</p>
+
+              <a href="#contact">
+                Learn More <ArrowRight size={16} />
+              </a>
+            </div>
+          ))}
+        </div>
+
+        {/* Division 02 - Healthcare */}
+        <div className="division-heading healthcare-heading">
+          <span>Healthcare Creative & Digital Solutions</span>
+          <p>
+            Creative branding and digital communication solutions
+            for healthcare professionals and clinics.
+          </p>
+        </div>
+
+        <div className="service-grid">
+          {healthcareServices.map((service, index) => (
             <div className="service-card" key={index}>
               <div className="service-icon">
                 {service.icon}
@@ -314,68 +388,112 @@ const response = await fetch(`${API_URL}/api/contact`, {
       <section className="why-section">
         <div className="why-content">
           <span>WHY SUVEXA VUSM</span>
-          <h2>Technology Built Around Your Business</h2>
+          <h2>Solutions Built Around Your Business</h2>
 
           <p>
-            We focus on creating practical technology solutions
-            that deliver measurable value.
+            We combine technical expertise and creative thinking
+            to deliver practical digital solutions that create
+            lasting business value.
           </p>
 
           <div className="check-list">
             <div>
               <CheckCircle2 />
-              <span>Modern technology stack</span>
+              <span>Modern technology and creative expertise</span>
             </div>
 
             <div>
               <CheckCircle2 />
-              <span>Scalable architecture</span>
+              <span>Business-focused solutions</span>
             </div>
 
             <div>
               <CheckCircle2 />
-              <span>Security-focused development</span>
+              <span>Scalable and reliable services</span>
             </div>
 
             <div>
               <CheckCircle2 />
-              <span>Customer-focused solutions</span>
+              <span>Customer-focused approach</span>
             </div>
           </div>
         </div>
       </section>
 
+
       {/* Technologies */}
       <section id="technology" className="section technology">
         <div className="section-heading center">
-          <span>OUR STACK</span>
-          <h2>Technologies We Work With</h2>
-        </div>
-
-        <div className="technology-grid">
-          {technologies.map((technology) => (
-            <div className="technology-card" key={technology}>
-              {technology}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="cta">
-        <div>
-          <span>READY TO BUILD?</span>
-          <h2>Let's Create Something Amazing Together.</h2>
+          <span>OUR TECHNOLOGY STACK</span>
+          <h2>Engineering Modern Software & Intelligent AI Solutions</h2>
           <p>
-            Have an idea or a business challenge? Let's discuss
-            how technology can help.
+            We leverage modern technologies, cloud platforms and
+            Generative AI frameworks to build scalable, secure
+            and intelligent digital solutions.
           </p>
         </div>
 
-        <a href="#contact" className="primary-button">
-          Start a Conversation <ArrowRight size={19} />
-        </a>
+        <div className="technology-grid">
+
+          {/* 01. Software Development */}
+          <div className="technology-category">
+            <span className="technology-number">Software Development</span>
+
+            <div className="technology-items">
+              {[
+                "React",
+                "Angular",
+                "HTML5",
+                "CSS3",
+                "Java",
+                "Spring Boot",
+                "Microservices Architecture",
+                "Node.js"
+              ].map((item) => (
+                <div className="technology-card" key={item}>
+                  {item}
+                </div>
+              ))}
+            </div>
+
+          </div>
+
+          {/* 02. Database & Cloud */}
+          <div className="technology-category">
+            <span className="technology-number">Database & Cloud</span>
+            <div className="technology-items">
+              {["MySQL", "MongoDB", "AWS", "Docker"].map((item) => (
+                <div className="technology-card" key={item}>
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 03. AI & Generative AI */}
+          <div className="technology-category">
+            <span className="technology-number">AI & Generative AI</span>
+            <div className="technology-items">
+              {[
+                "Python",
+                "LLMs",
+                "Prompt Engineering",
+                "RAG",
+                "Vector Databases",
+                "LangChain",
+                "Hugging Face",
+                "AI API Integration"
+              ].map((item) => (
+                <div className="technology-card" key={item}>
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
       </section>
+
 
       {/* Contact */}
       <section id="contact" className="section contact">
@@ -389,28 +507,38 @@ const response = await fetch(`${API_URL}/api/contact`, {
           <div className="contact-info">
             <div className="contact-item">
               <Mail />
+
               <div>
                 <small>Email</small>
                 <p>
-                  info@suvexavusm.com /
-                  infosuvexavusm@gmail.com
+                  <a href="mailto:info@suvexavusm.com">
+                    info@suvexavusm.com
+                  </a>
+                  <br />
+                  <a href="mailto:infosuvexavusm@gmail.com">
+                    infosuvexavusm@gmail.com
+                  </a>
+
                 </p>
               </div>
+
             </div>
 
-            <div className="contact-item">
-              <Phone />
-              <div>
-                <small>Phone</small>
-                <p>+91 99999 99999</p>
-              </div>
-            </div>
+            {/*
+<div className="contact-item">
+  <Phone />
+  <div>
+    <small>Phone</small>
+    <p>+91 99999 99999</p>
+  </div>
+</div>
+*/}
 
             <div className="contact-item">
               <MapPin />
               <div>
                 <small>Location</small>
-                <p>Bengaluru, Karnataka, India</p>
+                <p>HSR Layout, Bengaluru, Karnataka – 560100, India</p>
               </div>
             </div>
           </div>
@@ -503,10 +631,11 @@ const response = await fetch(`${API_URL}/api/contact`, {
         </div>
 
         <div className="footer-links">
-          <a href="#home">Home</a>
-          <a href="#about">About</a>
-          <a href="#services">Services</a>
-          <a href="#contact">Contact</a>
+          <a href="/#home">Home</a>
+          <a href="/#about">About</a>
+          <a href="/#services">Services</a>
+          <a href="/#technology">Technology</a>
+          <a href="/#contact">Contact</a>
         </div>
 
         <p className="copyright">

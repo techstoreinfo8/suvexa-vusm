@@ -25,7 +25,7 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [updatingId, setUpdatingId] = useState(null);
-   const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
 
   const getToken = () => sessionStorage.getItem("suvexa-admin-token");
@@ -135,24 +135,24 @@ function AdminDashboard() {
   const completedCount = enquiries.filter(
     (item) => item.status === "COMPLETED"
   ).length;
-const filteredEnquiries = enquiries.filter((item) => {
-  const search = searchTerm.trim().toLowerCase();
+  const filteredEnquiries = enquiries.filter((item) => {
+    const search = searchTerm.trim().toLowerCase();
 
-  const matchesSearch = [
-    item.name,
-    item.email,
-    item.phone,
-    item.subject,
-  ].some((value) =>
-    String(value || "").toLowerCase().includes(search)
-  );
+    const matchesSearch = [
+      item.name,
+      item.email,
+      item.phone,
+      item.subject,
+    ].some((value) =>
+      String(value || "").toLowerCase().includes(search)
+    );
 
-  const matchesStatus =
-    statusFilter === "ALL" ||
-    (item.status || "NEW") === statusFilter;
+    const matchesStatus =
+      statusFilter === "ALL" ||
+      (item.status || "NEW") === statusFilter;
 
-  return matchesSearch && matchesStatus;
-});
+    return matchesSearch && matchesStatus;
+  });
   const formatDate = (value) => {
     if (!value) return "—";
 
@@ -234,7 +234,7 @@ const filteredEnquiries = enquiries.filter((item) => {
 
           {loading ? (
             <p className="admin-message">Loading enquiries...</p>
-         ) : filteredEnquiries.length === 0 ? (
+          ) : filteredEnquiries.length === 0 ? (
             <p className="admin-message"> No matching enquiries found.
             </p>
           ) : (
@@ -299,27 +299,27 @@ const filteredEnquiries = enquiries.filter((item) => {
           )}
 
           <div className="admin-filters">
-  <input
-    type="search"
-    placeholder="Search name, email, phone or subject..."
-    value={searchTerm}
-    onChange={(event) => setSearchTerm(event.target.value)}
-    aria-label="Search enquiries"
-  />
+            <input
+              type="search"
+              placeholder="Search name, email, phone or subject..."
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              aria-label="Search enquiries"
+            />
 
-  <select
-    value={statusFilter}
-    onChange={(event) => setStatusFilter(event.target.value)}
-    aria-label="Filter enquiries by status"
-  >
-    <option value="ALL">All statuses</option>
-    {STATUSES.map((status) => (
-      <option key={status} value={status}>
-        {status.replaceAll("_", " ")}
-      </option>
-    ))}
-  </select>
-</div>
+            <select
+              value={statusFilter}
+              onChange={(event) => setStatusFilter(event.target.value)}
+              aria-label="Filter enquiries by status"
+            >
+              <option value="ALL">All statuses</option>
+              {STATUSES.map((status) => (
+                <option key={status} value={status}>
+                  {status.replaceAll("_", " ")}
+                </option>
+              ))}
+            </select>
+          </div>
         </section>
       </main>
     </div>
